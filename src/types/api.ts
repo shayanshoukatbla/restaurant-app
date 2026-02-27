@@ -1,11 +1,12 @@
 // ── Auth ─────────────────────────────────────────────────────
 
 export interface User {
-  id: string;
+  _id: string;
   email: string;
   name: string;
-  createdAt: string;
-  updatedAt: string;
+  dni?: string;
+  birthDate?: string;
+  address?: string;
 }
 
 export interface SignupRequest {
@@ -23,6 +24,10 @@ export interface LoginRequest {
 export interface LoginResponse {
   user: User;
   token: string;
+}
+
+export interface VerifyResponse {
+  user: User;
 }
 
 export interface LogoutResponse {

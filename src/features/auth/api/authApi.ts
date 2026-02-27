@@ -1,5 +1,11 @@
 import { apiClient } from '@api/client';
-import type { SignupRequest, LoginRequest, LoginResponse } from '@app-types/api';
+import type {
+  SignupRequest,
+  LoginRequest,
+  LoginResponse,
+  VerifyResponse,
+  LogoutResponse,
+} from '@app-types/api';
 
 export const authApi = {
   signup: async (body: SignupRequest): Promise<LoginResponse> => {
@@ -9,6 +15,16 @@ export const authApi = {
 
   login: async (body: LoginRequest): Promise<LoginResponse> => {
     const res = await apiClient.post<LoginResponse>('/auth/login', body);
+    return res.data;
+  },
+
+  verify: async (): Promise<VerifyResponse> => {
+    const res = await apiClient.get<VerifyResponse>('/auth/verify');
+    return res.data;
+  },
+
+  logout: async (): Promise<LogoutResponse> => {
+    const res = await apiClient.post<LogoutResponse>('/auth/logout');
     return res.data;
   },
 };

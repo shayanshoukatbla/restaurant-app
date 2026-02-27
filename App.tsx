@@ -24,7 +24,7 @@ const queryClient = new QueryClient({
 });
 
 function AppBootstrap(): React.JSX.Element {
-  const { token, clearAuth } = useAuthStore();
+  const { token, isHydrated, clearAuth, verifySession } = useAuthStore();
   const { fontsLoaded } = useAppFonts();
 
   useEffect(() => {
@@ -36,6 +36,12 @@ function AppBootstrap(): React.JSX.Element {
       },
     });
   }, [token, clearAuth]);
+
+  useEffect(() => {
+    if (isHydrated && token) {
+      verifySession();
+    }
+  }, [isHydrated]);
 
   if (!fontsLoaded) {
     return <View style={{ flex: 1, backgroundColor: '#FFFFFF' }} />;
