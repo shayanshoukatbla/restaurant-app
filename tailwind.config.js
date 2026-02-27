@@ -45,6 +45,7 @@ module.exports = {
         muted:        '#6B7280',
         subtle:       '#9CA3AF',
         border:       '#F3F4F6',
+        blue:         '#264BEB',
       },
       borderRadius: {
         '3xl':   '24px',

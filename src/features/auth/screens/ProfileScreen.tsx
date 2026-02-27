@@ -1,10 +1,15 @@
 import React from 'react';
 import { View, Text } from 'react-native';
+import { Button } from '@components/index';
+import { useAuthStore } from '@features/auth/store/useAuthStore';
 
 export default function ProfileScreen(): React.JSX.Element {
+  const { clearAuth } = useAuthStore();
+
   return (
-    <View className="flex-1 items-center justify-center bg-white">
-      <Text className="text-2xl font-bold">Profile</Text>
+    <View className="flex-1 items-center justify-center bg-canvas px-4">
+      <Text className="text-2xl font-bold mb-6">Profile</Text>
+      <Button label="Salir" onPress={clearAuth} variant="outline-black" />
     </View>
   );
 }

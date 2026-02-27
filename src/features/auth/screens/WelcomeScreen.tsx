@@ -24,7 +24,7 @@ export default function WelcomeScreen({ navigation }: Props): React.JSX.Element 
               <Button
                 label="Entrar"
                 onPress={() => navigation.navigate('Signin')}
-                variant="outline"
+                variant="outline-black"
               />
             </View>
           </View>
