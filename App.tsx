@@ -1,20 +1,58 @@
+import './global.css';
+import React, { useEffect } from 'react';
+import { View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+import { RootNavigator } from '@navigation/index';
+import { configureApiClient } from '@api/index';
+import { useAuthStore } from '@features/auth/store';
+import { useAppFonts } from '@hooks/index';
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 2,
+      staleTime: 1000 * 60 * 5, // 5 minutes
+    },
+    mutations: {
+      retry: 0,
+    },
   },
 });
+
+function AppBootstrap(): React.JSX.Element {
+  const { token, clearAuth } = useAuthStore();
+  const { fontsLoaded } = useAppFonts();
+
+  useEffect(() => {
+    configureApiClient({
+      tokenGetter: () => token,
+      onUnauthorized: () => {
+        clearAuth();
+        queryClient.clear();
+      },
+    });
+  }, [token, clearAuth]);
+
+  if (!fontsLoaded) {
+    return <View style={{ flex: 1, backgroundColor: '#FFFFFF' }} />;
+  }
+
+  return <RootNavigator />;
+}
+
+export default function App(): React.JSX.Element {
+  return (
+    <SafeAreaProvider>
+      <QueryClientProvider client={queryClient}>
+        <NavigationContainer>
+          <StatusBar style="auto" />
+          <AppBootstrap />
+        </NavigationContainer>
+      </QueryClientProvider>
+    </SafeAreaProvider>
+  );
+}
