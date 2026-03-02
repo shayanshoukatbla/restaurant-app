@@ -27,12 +27,12 @@ export const useFavoritesStore = create<FavoritesState>()(
 
       removeFavorite: (restaurantId: string) => {
         set((state) => ({
-          favorites: state.favorites.filter((r) => r.id !== restaurantId),
+          favorites: state.favorites.filter((r) => r._id !== restaurantId),
         }));
       },
 
       isFavorite: (restaurantId: string) => {
-        return get().favorites.some((r) => r.id === restaurantId);
+        return get().favorites.some((r) => r._id === restaurantId);
       },
 
       setHydrated: () => {

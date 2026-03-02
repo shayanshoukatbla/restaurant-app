@@ -32,6 +32,19 @@ export function IconHeart({ color = '#111827', size = 32 }: IconProps): React.JS
   );
 }
 
+export function IconHeartFill({ color = '#111827', size = 24 }: IconProps): React.JSX.Element {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M3.80579 6.20588C5.68031 4.33136 8.7195 4.33136 10.594 6.20588L11.9999 7.61176L13.4058 6.20588C15.2803 4.33136 18.3195 4.33136 20.194 6.20588C22.0685 8.08039 22.0685 11.1196 20.194 12.9941L11.9999 21.1882L3.80579 12.9941C1.93127 11.1196 1.93127 8.08039 3.80579 6.20588Z"
+        fill={color}
+      />
+    </Svg>
+  );
+}
+
 export function IconPerson({ color = '#111827', size = 32 }: IconProps): React.JSX.Element {
   return (
     <Svg width={size} height={size} viewBox="0 0 32 32" fill="none">
@@ -74,12 +87,7 @@ export function IconMap({ color = '#111827', size = 24 }: IconProps): React.JSX.
 export function IconList({ color = '#111827', size = 24 }: IconProps): React.JSX.Element {
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Path
-        d="M4 6H20M4 12H20M4 18H20"
-        stroke={color}
-        strokeWidth={2}
-        strokeLinecap="round"
-      />
+      <Path d="M4 6H20M4 12H20M4 18H20" stroke={color} strokeWidth={2} strokeLinecap="round" />
     </Svg>
   );
 }

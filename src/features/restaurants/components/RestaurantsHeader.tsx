@@ -25,11 +25,11 @@ export function RestaurantsHeader({
     <View className="flex-row items-center justify-between px-4 py-6 pb-2">
       <Text className="font-roobert-semibold text-2xl text-ink">{TITLES[viewMode]}</Text>
       <View className="flex-row items-center gap-6">
-        <TouchableOpacity activeOpacity={0.7} onPress={() => onViewModeChange('list')}>
-          <IconList color={viewMode === 'list' ? ACTIVE_COLOR : INACTIVE_COLOR} />
-        </TouchableOpacity>
         <TouchableOpacity activeOpacity={0.7} onPress={() => onViewModeChange('map')}>
           <IconMap color={viewMode === 'map' ? ACTIVE_COLOR : INACTIVE_COLOR} />
+        </TouchableOpacity>
+        <TouchableOpacity activeOpacity={0.7} onPress={() => onViewModeChange('list')}>
+          <IconList color={viewMode === 'list' ? ACTIVE_COLOR : INACTIVE_COLOR} />
         </TouchableOpacity>
       </View>
     </View>

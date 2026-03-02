@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import type { Restaurant } from '@app-types/api';
-import { IconStar, IconHeart } from '@components/icons';
+import { IconStar, IconHeart, IconHeartFill } from '@components/icons';
+import { useFavoritesStore } from '../store';
 
 interface RestaurantCardProps {
   restaurant: Restaurant;
@@ -25,7 +26,19 @@ export function RestaurantCard({
   onPress,
   variant = 'list',
 }: RestaurantCardProps): React.JSX.Element {
+  const { isFavorite, addFavorite, removeFavorite } = useFavoritesStore();
+  const favorited = isFavorite(restaurant._id);
   const reviewCount = restaurant.reviews?.length ?? 0;
+
+  const handleFavoritePress = (): void => {
+    if (favorited) {
+      removeFavorite(restaurant._id);
+    } else {
+      addFavorite(restaurant);
+    }
+  };
+
+  const HeartIcon = favorited ? IconHeartFill : IconHeart;
 
   if (variant === 'map') {
     return (
@@ -49,7 +62,9 @@ export function RestaurantCard({
                 {restaurant.address}
               </Text>
             </View>
-            <IconHeart color="#111827" size={24} />
+            <TouchableOpacity onPress={handleFavoritePress} hitSlop={8} activeOpacity={0.7}>
+              <HeartIcon size={24} />
+            </TouchableOpacity>
           </View>
           {restaurant.avgRating != null && <StarRating rating={restaurant.avgRating} />}
         </View>
@@ -78,7 +93,9 @@ export function RestaurantCard({
               {restaurant.address}
             </Text>
           </View>
-          <IconHeart color="#111827" size={24} />
+          <TouchableOpacity onPress={handleFavoritePress} hitSlop={8} activeOpacity={0.7}>
+            <HeartIcon size={24} />
+          </TouchableOpacity>
         </View>
         <View className="flex-row items-center gap-4">
           {restaurant.avgRating != null && <StarRating rating={restaurant.avgRating} />}
