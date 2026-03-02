@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, ActivityIndicator, Text } from 'react-native';
-import Svg, { Path } from 'react-native-svg';
+import { IconArrowLeft, IconArrowRight } from '@components/icons';
 
 type ButtonVariant = 'outline-black' | 'outline-white' | 'solid-black' | 'solid-white';
 
@@ -13,52 +13,6 @@ interface ButtonProps {
   disabled?: boolean;
   loading?: boolean;
   className?: string;
-}
-
-function ArrowLeft({ color }: { color: string }): React.JSX.Element {
-  return (
-    <Svg width={28} height={28} viewBox="0 0 28 28" fill="none">
-      <Path
-        d="M11.165 21.0817L4.08331 14L11.165 6.91833"
-        stroke={color}
-        strokeWidth={1.5}
-        strokeMiterlimit={10}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <Path
-        d="M23.9167 14L4.28169 14"
-        stroke={color}
-        strokeWidth={1.5}
-        strokeMiterlimit={10}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </Svg>
-  );
-}
-
-function ArrowRight({ color }: { color: string }): React.JSX.Element {
-  return (
-    <Svg width={28} height={28} viewBox="0 0 28 28" fill="none">
-      <Path
-        d="M16.835 6.91833L23.9167 14L16.835 21.0817"
-        stroke={color}
-        strokeWidth={1.5}
-        strokeMiterlimit={10}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <Path
-        d="M4.08331 14L23.7183 14"
-        stroke={color}
-        strokeWidth={1.5}
-        strokeMiterlimit={10}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </Svg>
-  );
 }
 
 const VARIANT_STYLES: Record<
@@ -126,11 +80,11 @@ export function Button({
         <ActivityIndicator size="small" color={loaderColor} />
       ) : (
         <>
-          {showArrowLeft && <ArrowLeft color={iconColor} />}
+          {showArrowLeft && <IconArrowLeft color={iconColor} />}
           {label ? (
             <Text className={`font-roobert-semibold text-base ${textColor}`}>{label}</Text>
           ) : null}
-          {showArrow && <ArrowRight color={iconColor} />}
+          {showArrow && <IconArrowRight color={iconColor} />}
         </>
       )}
     </TouchableOpacity>

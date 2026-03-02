@@ -20,7 +20,6 @@ export type AuthStackScreenProps<T extends keyof AuthStackParamList> = NativeSta
 
 export type AppTabParamList = {
   RestaurantList: undefined;
-  MapView: undefined;
   Favorites: undefined;
   Profile: undefined;
 };
@@ -28,12 +27,10 @@ export type AppTabParamList = {
 // ── Restaurant Stack (inside Tabs) ───────────────────────────
 
 export type RestaurantStackParamList = {
-  RestaurantListScreen: undefined;
+  Restaurants: undefined;
   RestaurantDetail: { restaurantId: string };
   CreateRestaurant: undefined;
   EditRestaurant: { restaurantId: string };
-  RestaurantSuccess: { message: string };
-  RestaurantError: { message: string };
 };
 
 export type RestaurantStackScreenProps<T extends keyof RestaurantStackParamList> =
