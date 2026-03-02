@@ -56,13 +56,24 @@ export interface LatLng {
   lng: number;
 }
 
+export interface Review {
+  _id: string;
+  name?: string;
+  owner: string;
+  date: string;
+  rating: number;
+  comment: string;
+}
+
 export interface Restaurant {
-  id: string;
+  _id: string;
   name: string;
+  owner: string;
   address: string;
   image: string;
   latlng: LatLng;
   description?: string;
+  reviews: Review[];
   avgRating?: number;
   createdAt: string;
   updatedAt: string;
@@ -76,21 +87,6 @@ export interface RestaurantListResponse {
 export interface RestaurantListParams {
   limit?: number;
   page?: number;
-}
-
-export interface Comment {
-  id: string;
-  comment: string;
-  /** 1-5 */
-  rating: number;
-  userId: string;
-  restaurantId: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface RestaurantDetail extends Restaurant {
-  comments: Comment[];
 }
 
 export interface CreateRestaurantRequest {
@@ -109,16 +105,16 @@ export interface UpdateRestaurantRequest {
   latlng?: LatLng;
 }
 
-// ── Comments ─────────────────────────────────────────────────
+// ── Reviews ──────────────────────────────────────────────────
 
-export interface CreateCommentRequest {
+export interface CreateReviewRequest {
   /** 10-255 characters */
   comment: string;
   /** 1-5 */
   rating: number;
 }
 
-export interface UpdateCommentRequest {
+export interface UpdateReviewRequest {
   comment?: string;
   rating?: number;
 }

@@ -22,7 +22,7 @@ export function RestaurantsHeader({
   onViewModeChange,
 }: RestaurantsHeaderProps): React.JSX.Element {
   return (
-    <View className="flex-row items-center justify-between px-4 py-6">
+    <View className="flex-row items-center justify-between px-4 py-6 pb-2">
       <Text className="font-roobert-semibold text-2xl text-ink">{TITLES[viewMode]}</Text>
       <View className="flex-row items-center gap-6">
         <TouchableOpacity activeOpacity={0.7} onPress={() => onViewModeChange('list')}>

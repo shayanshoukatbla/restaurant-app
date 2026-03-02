@@ -129,3 +129,14 @@ export function IconArrowRight({ color = '#FFFFFF', size = 28 }: IconProps): Rea
     </Svg>
   );
 }
+
+export function IconStar({ color = '#264BEB', size = 16 }: IconProps): React.JSX.Element {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 16 16" fill="none">
+      <Path
+        d="M8 0L9.16938 5.17688L13.6569 2.34315L10.8231 6.83062L16 8L10.8231 9.16938L13.6569 13.6569L9.16938 10.8231L8 16L6.83062 10.8231L2.34315 13.6569L5.17688 9.16938L0 8L5.17688 6.83062L2.34315 2.34315L6.83062 5.17688L8 0Z"
+        fill={color}
+      />
+    </Svg>
+  );
+}
