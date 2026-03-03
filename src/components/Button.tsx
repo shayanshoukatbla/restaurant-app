@@ -12,6 +12,7 @@ interface ButtonProps {
   showArrowLeft?: boolean;
   disabled?: boolean;
   loading?: boolean;
+  fullWidth?: boolean;
   className?: string;
 }
 
@@ -53,6 +54,7 @@ export function Button({
   showArrowLeft = false,
   disabled = false,
   loading = false,
+  fullWidth = false,
   className = '',
 }: ButtonProps): React.JSX.Element {
   const { container, textColor, iconColor, loaderColor } = VARIANT_STYLES[variant];
@@ -61,7 +63,7 @@ export function Button({
 
   const containerClass = [
     'flex-row items-center justify-center gap-2 rounded-button',
-    iconOnly ? 'py-2 px-8 !rounded-3xl' : 'w-full h-11',
+    iconOnly ? 'py-2 px-8 !rounded-3xl' : fullWidth ? 'w-full h-11' : ' px-6 h-11',
     container,
     disabled ? 'opacity-40' : '',
     className,

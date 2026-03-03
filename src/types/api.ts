@@ -56,14 +56,23 @@ export interface LatLng {
   lng: number;
 }
 
+/** The API only exposes { name } for review owners — no _id is returned */
+export interface ReviewOwner {
+  name: string;
+}
+
 export interface Review {
   _id: string;
+  /** Reviewer display name (same as owner.name) */
   name?: string;
-  owner: string;
+  owner: ReviewOwner;
   date: string;
   rating: number;
   comment: string;
 }
+
+// Full detail-page type (same shape, kept separate for clarity)
+export type RestaurantDetail = Restaurant;
 
 export interface Restaurant {
   _id: string;
@@ -105,7 +114,7 @@ export interface UpdateRestaurantRequest {
   latlng?: LatLng;
 }
 
-// ── Reviews ──────────────────────────────────────────────────
+// ── Reviews / Comments ───────────────────────────────────────
 
 export interface CreateReviewRequest {
   /** 10-255 characters */
@@ -117,6 +126,14 @@ export interface CreateReviewRequest {
 export interface UpdateReviewRequest {
   comment?: string;
   rating?: number;
+}
+
+// Aliases used by the detail page
+export type AddCommentRequest = CreateReviewRequest;
+export type UpdateCommentRequest = UpdateReviewRequest;
+
+export interface CommentResponse {
+  review: Review;
 }
 
 // ── Generic API error ────────────────────────────────────────
