@@ -3,11 +3,13 @@ import {
   View,
   Text,
   TextInput,
+  TouchableOpacity,
   type TextInputProps,
   type TextInput as RNTextInput,
 } from 'react-native';
+import { IconEdit } from './icons';
 
-type InputTheme = 'dark' | 'light';
+type InputTheme = 'dark' | 'light' | 'profile';
 
 export interface AppInputProps extends TextInputProps {
   label: string;
@@ -29,11 +31,65 @@ export function AppInput({
   const inputRef = useRef<RNTextInput>(null);
 
   const isLight = theme === 'light';
+  const isProfile = theme === 'profile';
   const isPassword = Boolean(secureTextEntry);
 
+  // ── Profile variant ───────────────────────────────────────
+  if (isProfile) {
+    return (
+      <View className="w-full">
+        {/* Row: text column + edit icon */}
+        <View className="flex-row items-center gap-2 pb-2 border-b border-blue">
+          {/* Left: label stacked above input value */}
+          <View className="flex-1 gap-2">
+            <Text className="font-roobert-semibold text-base text-ink">{label}</Text>
+            <TextInput
+              ref={inputRef}
+              {...rest}
+              secureTextEntry={isPassword}
+              onFocus={(e) => {
+                setIsFocused(true);
+                onFocus?.(e);
+              }}
+              onBlur={(e) => {
+                setIsFocused(false);
+                onBlur?.(e);
+              }}
+              className="font-roobert text-sm"
+              style={[
+                {
+                  color: '#0B0B0B',
+                  opacity: isFocused ? 1 : 0.6,
+                  paddingHorizontal: 0,
+                  paddingVertical: 2,
+                },
+                style,
+              ]}
+              placeholderTextColor="rgba(11,11,11,0.4)"
+            />
+          </View>
+
+          {/* Right: pencil edit icon  */}
+          <TouchableOpacity
+            onPress={() => inputRef.current?.focus()}
+            activeOpacity={0.6}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <IconEdit size={24} color="#111827" />
+          </TouchableOpacity>
+        </View>
+
+        {/* Error */}
+        {error ? <Text className="font-roobert text-xs text-red-600 mt-1">{error}</Text> : null}
+      </View>
+    );
+  }
+
+  // ── Dark / Light variants (existing) ─────────────────────
   const labelClass = isLight
     ? 'font-roobert-semibold text-2xl text-canvas'
     : 'font-roobert-semibold text-2xl text-ink';
+
   const boxClass = [
     'flex-row items-center rounded-3xl px-6 py-2 gap-2 border',
     isLight ? 'border-canvas' : 'border-ink',
@@ -44,8 +100,6 @@ export function AppInput({
 
   const inputTextColor = isLight ? '#FFFFFF' : '#0B0B0B';
   const placeholderColor = isLight ? 'rgba(255,255,255,0.6)' : '#9CA3AF';
-
-  const errorClass = isLight ? 'font-roobert text-xs' : 'font-roobert text-xs';
   const errorColor = isLight ? '#FFB3B3' : '#DC2626';
 
   return (
@@ -77,7 +131,7 @@ export function AppInput({
 
       {/* Error */}
       {error ? (
-        <Text className={errorClass} style={{ color: errorColor }}>
+        <Text className="font-roobert text-xs" style={{ color: errorColor }}>
           {error}
         </Text>
       ) : null}

@@ -23,19 +23,13 @@ type Props = RestaurantStackScreenProps<'RestaurantDetail'>;
 export default function RestaurantDetailScreen({ route, navigation }: Props): React.JSX.Element {
   const { restaurantId } = route.params;
   const user = useAuthStore((s) => s.user);
-  const isHydrated = useAuthStore((s) => s.isHydrated);
-  const currentUserName = isHydrated ? (user?.name ?? null) : null;
+
+  const currentUserName = user?.name ?? null;
 
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
 
-  const {
-    data: restaurant,
-    isLoading,
-    isError,
-    error,
-    refetch,
-  } = useRestaurantDetail(restaurantId);
+  const { data: restaurant, isLoading, isError, error } = useRestaurantDetail(restaurantId);
 
   // ── Mutations ────────────────────────────────────────────────
   const { mutate: addComment, isPending: isAddingComment } = useAddComment(restaurantId);

@@ -40,13 +40,14 @@ export const useAuthStore = create<AuthState>()(
       },
 
       verifySession: async () => {
-        const { token, clearAuth } = get();
+        const { token, user: storedUser, clearAuth } = get();
         if (!token) return;
 
         set({ isVerifying: true });
         try {
-          const { user } = await authApi.verify();
-          set({ user, isAuthenticated: true });
+          const { user: freshUser } = await authApi.verify();
+
+          set({ user: { ...storedUser, ...freshUser }, isAuthenticated: true });
         } catch {
           clearAuth();
         } finally {

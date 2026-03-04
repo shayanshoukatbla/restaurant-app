@@ -2,10 +2,8 @@ import axios, { AxiosError } from 'axios';
 import type { InternalAxiosRequestConfig, AxiosResponse } from 'axios';
 import type { ApiError } from '@app-types/api';
 
-export const BASE_URL =
-  process.env.EXPO_PUBLIC_API_BASE_URL ?? 'https://react-native-challenge-api.tailor-hub.com/api'; //TODO: Later remove this for production
+export const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
-// Token getter — replaced by the auth store at runtime
 let _tokenGetter: (() => string | null) | null = null;
 let _onUnauthorized: (() => void) | null = null;
 
