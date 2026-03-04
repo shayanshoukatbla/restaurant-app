@@ -17,6 +17,12 @@ import type { NominatimResult } from '@api/geocodingApi';
 
 type InputTheme = 'dark' | 'light' | 'profile';
 
+export interface AddressLocation {
+  address: string;
+  lat: number;
+  lng: number;
+}
+
 export interface AddressInputProps extends Omit<
   TextInputProps,
   'value' | 'onChangeText' | 'onChange'
@@ -24,6 +30,7 @@ export interface AddressInputProps extends Omit<
   label: string;
   value: string;
   onChange: (value: string) => void;
+  onLocationChange?: (location: AddressLocation) => void;
   theme?: InputTheme;
   error?: string;
 }
@@ -73,6 +80,7 @@ export function AddressInput({
   label,
   value,
   onChange,
+  onLocationChange,
   theme = 'dark',
   error,
   style,
@@ -103,6 +111,11 @@ export function AddressInput({
 
   const handleSelect = (item: NominatimResult): void => {
     onChange(item.display_name);
+    onLocationChange?.({
+      address: item.display_name,
+      lat: parseFloat(item.lat),
+      lng: parseFloat(item.lon),
+    });
     setShowDropdown(false);
     setDebouncedQuery('');
     inputRef.current?.blur();

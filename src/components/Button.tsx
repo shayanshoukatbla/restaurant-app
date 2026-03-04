@@ -14,6 +14,7 @@ interface ButtonProps {
   loading?: boolean;
   fullWidth?: boolean;
   className?: string;
+  textSize?: string;
 }
 
 const VARIANT_STYLES: Record<
@@ -56,6 +57,7 @@ export function Button({
   loading = false,
   fullWidth = false,
   className = '',
+  textSize = '',
 }: ButtonProps): React.JSX.Element {
   const { container, textColor, iconColor, loaderColor } = VARIANT_STYLES[variant];
 
@@ -63,7 +65,7 @@ export function Button({
 
   const containerClass = [
     'flex-row items-center justify-center gap-2 rounded-button',
-    iconOnly ? 'py-2 px-8 !rounded-3xl' : fullWidth ? 'w-full h-11' : ' px-6 h-11',
+    iconOnly ? 'py-2 px-8 !rounded-3xl' : fullWidth ? 'w-full h-11' : ' px-6  py-4',
     container,
     disabled ? 'opacity-40' : '',
     className,
@@ -84,7 +86,9 @@ export function Button({
         <>
           {showArrowLeft && <IconArrowLeft color={iconColor} />}
           {label ? (
-            <Text className={`font-roobert-semibold text-base ${textColor}`}>{label}</Text>
+            <Text className={`font-roobert-semibold text-base ${textColor} ${textSize}`}>
+              {label}
+            </Text>
           ) : null}
           {showArrow && <IconArrowRight color={iconColor} />}
         </>

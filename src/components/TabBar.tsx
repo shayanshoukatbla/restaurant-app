@@ -16,11 +16,12 @@ const TAB_ICONS: Record<keyof AppTabParamList, (color: string) => React.JSX.Elem
 export function TabBar({ state, navigation }: BottomTabBarProps): React.JSX.Element {
   return (
     <View className="relative">
-      {/* TODO: when click on this it should navigate to create restaurant screen */}
-      {/* Floating button for create new restaurant */}
+      {/* Floating button — navigate to create restaurant screen */}
       <TouchableOpacity
         activeOpacity={0.85}
-        onPress={() => navigation.navigate('RestaurantList')}
+        onPress={() =>
+          navigation.navigate('RestaurantList', { screen: 'CreateRestaurant' })
+        }
         className="absolute right-4 -top-16 w-14 h-14 rounded-full bg-blue items-center justify-center z-10"
       >
         <IconPlus />

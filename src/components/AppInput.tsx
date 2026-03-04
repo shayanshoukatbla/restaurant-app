@@ -91,7 +91,8 @@ export function AppInput({
     : 'font-roobert-semibold text-2xl text-ink';
 
   const boxClass = [
-    'flex-row items-center rounded-3xl px-6 py-2 gap-2 border',
+    'flex-row rounded-3xl px-6 py-2 gap-2 border',
+    rest.multiline ? 'items-start' : 'items-center',
     isLight ? 'border-canvas' : 'border-ink',
     isFocused && !isLight ? 'border-ink' : '',
   ]

@@ -21,6 +21,7 @@ export type AuthStackScreenProps<T extends keyof AuthStackParamList> = NativeSta
 export type AppTabParamList = {
   RestaurantList:
     | { screen: 'RestaurantDetail'; params: { restaurantId: string } }
+    | { screen: 'CreateRestaurant' }
     | { screen: 'Restaurants' }
     | undefined;
   Favorites: undefined;

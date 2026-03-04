@@ -12,6 +12,8 @@ const nominatimClient = axios.create({
 
 export interface NominatimResult {
   display_name: string;
+  lat: string;
+  lon: string;
   address: {
     road?: string;
     house_number?: string;
