@@ -42,7 +42,12 @@ export default function RestaurantsScreen({ navigation }: Props): React.JSX.Elem
             onEndReached={fetchNextPage}
           />
         ) : (
-          <RestaurantMapView restaurants={restaurants} onRestaurantPress={handleRestaurantPress} />
+          <RestaurantMapView
+            restaurants={restaurants}
+            onRestaurantPress={handleRestaurantPress}
+            hasNextPage={hasNextPage}
+            onEndReached={fetchNextPage}
+          />
         )}
       </View>
     </SafeAreaView>
