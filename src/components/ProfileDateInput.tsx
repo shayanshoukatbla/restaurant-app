@@ -35,7 +35,7 @@ export function DateInput({ label, value, onChange, error }: DateInputProps): Re
         </View>
       </TouchableOpacity>
 
-      {error ? <Text className="font-roobert text-xs text-red-600 mt-1">{error}</Text> : null}
+      {error ? <Text className="font-roobert text-xs text-error mt-1">{error}</Text> : null}
 
       {show && Platform.OS === 'android' && (
         <DateTimePicker

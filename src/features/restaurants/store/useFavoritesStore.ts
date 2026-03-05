@@ -72,7 +72,13 @@ export const useFavoritesStore = create<FavoritesState>()(
         restaurantCache: state.restaurantCache,
       }),
       onRehydrateStorage: () => (state) => {
-        state?.setHydrated();
+        if (state) {
+          const validIds = state.favoriteIds.filter((id) => state.restaurantCache[id]);
+          if (validIds.length !== state.favoriteIds.length) {
+            state.favoriteIds = validIds;
+          }
+          state.setHydrated();
+        }
       },
     },
   ),

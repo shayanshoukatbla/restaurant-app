@@ -1,19 +1,12 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-  TouchableOpacity,
-} from 'react-native';
+import { View, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RestaurantStackParamList } from '@app-types/navigation';
 import type { Restaurant } from '@app-types/api';
-import { AppInput, AddressInput, IconIsotipo, FallbackScreen } from '@components/index';
+import { AppInput, AddressInput, IconIsotipo, FallbackScreen, Button } from '@components/index';
 import type { AddressLocation } from '@components/AddressInput';
 import { ImageUploadBox, type SelectedImage } from './ImageUploadBox';
 import { useUploadImage, useUpdateRestaurant } from '../hooks/useCreateRestaurant';
@@ -58,6 +51,7 @@ export function EditRestaurantForm({
     mutate: updateRestaurant,
     isPending: isUpdating,
     error: updateError,
+    reset: resetUpdate,
   } = useUpdateRestaurant(restaurant._id);
 
   const serverError = updateError ? formatError(updateError) : null;
@@ -113,13 +107,24 @@ export function EditRestaurantForm({
 
   const isBusy = isUploading || isUpdating;
 
-  // ── Success state ────────────────────────────────────────────
+  // ── Status states ────────────────────────────────────────────
   if (saved) {
     return (
       <FallbackScreen
         title="Restaurante guardado"
         buttonLabel="Ver restaurante"
         onPress={() => navigation.goBack()}
+        animate
+      />
+    );
+  }
+
+  if (serverError) {
+    return (
+      <FallbackScreen
+        title={serverError}
+        buttonLabel="Intentar de nuevo"
+        onPress={() => resetUpdate()}
         animate
       />
     );
@@ -207,23 +212,13 @@ export function EditRestaurantForm({
             />
           </View>
 
-          {serverError ? (
-            <Text className="font-roobert text-sm text-center" style={{ color: '#DC2626' }}>
-              {serverError}
-            </Text>
-          ) : null}
-
-          <TouchableOpacity
-            activeOpacity={0.85}
+          <Button
+            label={isBusy ? 'Guardando…' : 'Guardar'}
             onPress={handleSubmit(onSubmit)}
+            variant="outline-black"
             disabled={isBusy}
-            className="w-full flex-row items-center justify-center rounded-button border border-ink py-3 gap-2"
-            style={{ opacity: isBusy ? 0.6 : 1 }}
-          >
-            <Text className="font-roobert-semibold text-base text-ink">
-              {isBusy ? 'Guardando…' : 'Guardar'}
-            </Text>
-          </TouchableOpacity>
+            fullWidth
+          />
         </ScrollView>
       </SafeAreaView>
     </KeyboardAvoidingView>

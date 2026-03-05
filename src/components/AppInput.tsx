@@ -80,7 +80,7 @@ export function AppInput({
         </View>
 
         {/* Error */}
-        {error ? <Text className="font-roobert text-xs text-red-600 mt-1">{error}</Text> : null}
+        {error ? <Text className="font-roobert text-xs text-error mt-1">{error}</Text> : null}
       </View>
     );
   }
@@ -101,7 +101,6 @@ export function AppInput({
 
   const inputTextColor = isLight ? '#FFFFFF' : '#0B0B0B';
   const placeholderColor = isLight ? 'rgba(255,255,255,0.6)' : '#9CA3AF';
-  const errorColor = isLight ? '#FFB3B3' : '#DC2626';
 
   return (
     <View className="w-full gap-2">
@@ -131,11 +130,7 @@ export function AppInput({
       </View>
 
       {/* Error */}
-      {error ? (
-        <Text className="font-roobert text-xs" style={{ color: errorColor }}>
-          {error}
-        </Text>
-      ) : null}
+      {error ? <Text className="font-roobert text-xs text-error">{error}</Text> : null}
     </View>
   );
 }

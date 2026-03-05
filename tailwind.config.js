@@ -46,6 +46,7 @@ module.exports = {
         subtle:       '#9CA3AF',
         border:       '#F3F4F6',
         blue:         '#264BEB',
+        error:        '#DC2626',
       },
       borderRadius: {
         '3xl':   '24px',

@@ -66,7 +66,6 @@ function getTokens(theme: InputTheme, isFocused: boolean) {
       : isProfile
         ? 'rgba(11,11,11,0.4)'
         : '#9CA3AF',
-    errorColor: isLight ? '#FFB3B3' : '#DC2626',
     dropdownBg: isLight ? '#1F2937' : '#FFFFFF',
     dropdownBorder: isLight ? '#374151' : '#E5E7EB',
     dropdownTextColor: isLight ? '#FFFFFF' : '#0B0B0B',
@@ -168,11 +167,7 @@ export function AddressInput({
           </TouchableOpacity>
         </View>
 
-        {error ? (
-          <Text className="font-roobert text-xs mt-1" style={{ color: tokens.errorColor }}>
-            {error}
-          </Text>
-        ) : null}
+        {error ? <Text className="font-roobert text-xs text-error mt-1">{error}</Text> : null}
 
         {isDropdownVisible && <Dropdown {...{ isFetching, suggestions, tokens, handleSelect }} />}
       </View>
@@ -205,11 +200,7 @@ export function AddressInput({
         />
       </View>
 
-      {error ? (
-        <Text className="font-roobert text-xs" style={{ color: tokens.errorColor }}>
-          {error}
-        </Text>
-      ) : null}
+      {error ? <Text className="font-roobert text-xs text-error">{error}</Text> : null}
 
       {isDropdownVisible && <Dropdown {...{ isFetching, suggestions, tokens, handleSelect }} />}
     </View>

@@ -1,17 +1,10 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-  TouchableOpacity,
-} from 'react-native';
+import { View, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { RestaurantStackScreenProps } from '@app-types/navigation';
-import { AppInput, AddressInput, IconIsotipo } from '@components/index';
+import { AppInput, AddressInput, IconIsotipo, Button, FallbackScreen } from '@components/index';
 import type { AddressLocation } from '@components/AddressInput';
 import { ImageUploadBox, type SelectedImage } from '../components/ImageUploadBox';
 import { useUploadImage, useCreateRestaurant } from '../hooks/useCreateRestaurant';
@@ -25,6 +18,7 @@ type Props = RestaurantStackScreenProps<'CreateRestaurant'>;
 
 export default function CreateRestaurantScreen({ navigation }: Props): React.JSX.Element {
   const [selectedImage, setSelectedImage] = useState<SelectedImage | undefined>();
+  const [saved, setSaved] = useState(false);
 
   const {
     control,
@@ -49,6 +43,7 @@ export default function CreateRestaurantScreen({ navigation }: Props): React.JSX
     mutate: createRestaurant,
     isPending: isCreating,
     error: createError,
+    reset: resetCreate,
   } = useCreateRestaurant();
 
   const serverError = createError ? formatError(createError) : null;
@@ -98,15 +93,38 @@ export default function CreateRestaurantScreen({ navigation }: Props): React.JSX
 
     createRestaurant(payload, {
       onSuccess: () => {
-        navigation.goBack();
+        setSaved(true);
       },
       onError: () => {
-        // Error handled by serverError state
+        // Error handled by serverError state matching the fallback
       },
     });
   };
 
   const isBusy = isUploading || isCreating;
+
+  // ── Status states ────────────────────────────────────────────
+  if (saved) {
+    return (
+      <FallbackScreen
+        title="Restaurante creado"
+        buttonLabel="Volver al inicio"
+        onPress={() => navigation.goBack()}
+        animate
+      />
+    );
+  }
+
+  if (serverError) {
+    return (
+      <FallbackScreen
+        title={serverError}
+        buttonLabel="Intentar de nuevo"
+        onPress={() => resetCreate()}
+        animate
+      />
+    );
+  }
 
   // ── Render ──────────────────────────────────────────────────
 
@@ -196,25 +214,14 @@ export default function CreateRestaurantScreen({ navigation }: Props): React.JSX
             />
           </View>
 
-          {/* Server error */}
-          {serverError ? (
-            <Text className="font-roobert text-sm text-center" style={{ color: '#DC2626' }}>
-              {serverError}
-            </Text>
-          ) : null}
-
           {/* Submit button */}
-          <TouchableOpacity
-            activeOpacity={0.85}
+          <Button
+            label={isBusy ? 'Guardando…' : 'Guardar'}
             onPress={handleSubmit(onSubmit)}
+            variant="outline-black"
             disabled={isBusy}
-            className="w-full flex-row items-center justify-center rounded-button border border-ink py-3 gap-2"
-            style={{ opacity: isBusy ? 0.6 : 1 }}
-          >
-            <Text className="font-roobert-semibold text-base text-ink">
-              {isBusy ? 'Guardando…' : 'Guardar'}
-            </Text>
-          </TouchableOpacity>
+            fullWidth
+          />
         </ScrollView>
       </SafeAreaView>
     </KeyboardAvoidingView>

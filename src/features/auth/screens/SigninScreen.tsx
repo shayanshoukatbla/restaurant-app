@@ -104,9 +104,7 @@ export default function SigninScreen({ navigation }: Props): React.JSX.Element {
                 )}
               />
               {serverError ? (
-                <Text className="font-roobert text-sm text-center" style={{ color: '#FFB3B3' }}>
-                  {serverError}
-                </Text>
+                <Text className="font-roobert text-sm text-center text-error">{serverError}</Text>
               ) : null}
               <Button
                 label="Entrar"

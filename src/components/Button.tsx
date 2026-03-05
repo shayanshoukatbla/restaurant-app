@@ -15,6 +15,7 @@ interface ButtonProps {
   fullWidth?: boolean;
   className?: string;
   textSize?: string;
+  children?: React.ReactNode;
 }
 
 const VARIANT_STYLES: Record<
@@ -58,6 +59,7 @@ export function Button({
   fullWidth = false,
   className = '',
   textSize = '',
+  children,
 }: ButtonProps): React.JSX.Element {
   const { container, textColor, iconColor, loaderColor } = VARIANT_STYLES[variant];
 
@@ -82,6 +84,8 @@ export function Button({
     >
       {loading ? (
         <ActivityIndicator size="small" color={loaderColor} />
+      ) : children ? (
+        children
       ) : (
         <>
           {showArrowLeft && <IconArrowLeft color={iconColor} />}

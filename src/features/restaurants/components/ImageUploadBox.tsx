@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Image, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, Image, ActivityIndicator, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { IconPlus } from '@components/icons';
 import { Button } from '@components/Button';
@@ -93,22 +93,22 @@ export function ImageUploadBox({
           </>
         ) : (
           // ── Empty state ────────────────────────────────────
-          <TouchableOpacity
-            activeOpacity={0.75}
+          <Button
+            variant="outline-black"
             onPress={handlePress}
             disabled={isUploading}
-            className="flex-1 items-center justify-center"
+            className="flex-1 !border-0 bg-transparent"
           >
             <View className="items-center gap-2">
               <IconPlus size={24} color="#0B0B0B" />
               <Text className="font-roobert-semibold text-base text-ink">Añadir imágen</Text>
             </View>
-          </TouchableOpacity>
+          </Button>
         )}
       </View>
 
       {error ? (
-        <Text className="font-roobert text-xs text-red-600 mt-2 text-center">{error}</Text>
+        <Text className="font-roobert text-xs text-error mt-2 text-center">{error}</Text>
       ) : null}
     </View>
   );
