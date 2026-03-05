@@ -1,7 +1,9 @@
 import React from 'react';
+import { TouchableOpacity } from 'react-native';
 import { Marker } from 'react-native-maps';
 import type { Restaurant } from '@app-types/api';
 import { IconLocationMarker } from '@components/icons';
+import { openDirections } from '../utils/mapDirections';
 
 interface MapMarkersProps {
   restaurants: Restaurant[];
@@ -26,7 +28,12 @@ export function MapMarkers({
           onPress={() => onMarkerPress(index)}
           tracksViewChanges={false}
         >
-          <IconLocationMarker selected={index === focusedIndex} />
+          <TouchableOpacity
+            onLongPress={() => openDirections(restaurant.latlng.lat, restaurant.latlng.lng, restaurant.name)}
+            activeOpacity={1}
+          >
+            <IconLocationMarker selected={index === focusedIndex} />
+          </TouchableOpacity>
         </Marker>
       ))}
     </>

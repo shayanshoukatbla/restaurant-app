@@ -55,10 +55,17 @@ export function RestaurantCard({
         <View className="flex-1 gap-2 py-1">
           <View className="flex-row items-start justify-between gap-2">
             <View className="flex-1 gap-1">
-              <Text className="font-roobert-semibold text-base text-ink leading-tight" numberOfLines={1}>
+              <Text
+                className="font-roobert-semibold text-base text-ink leading-tight"
+                numberOfLines={1}
+              >
                 {restaurant.name}
               </Text>
-              <Text className="font-roobert text-sm text-ink leading-tight" numberOfLines={1}>
+              <Text
+                style={{ paddingHorizontal: 0, paddingVertical: 2 }}
+                className="font-roobert text-sm text-ink leading-tight"
+                numberOfLines={1}
+              >
                 {restaurant.address}
               </Text>
             </View>
@@ -86,10 +93,17 @@ export function RestaurantCard({
       <View className="flex-1 justify-between self-stretch py-2">
         <View className="flex-row items-start justify-between gap-2">
           <View className="flex-1 gap-1">
-            <Text className="font-roobert-semibold text-base text-ink leading-tight" numberOfLines={1}>
+            <Text
+              className="font-roobert-semibold text-base text-ink leading-tight"
+              numberOfLines={1}
+            >
               {restaurant.name}
             </Text>
-            <Text className="font-roobert text-sm text-ink leading-tight" numberOfLines={1}>
+            <Text
+              style={{ paddingHorizontal: 0, paddingVertical: 2 }}
+              className="font-roobert text-sm text-ink leading-tight"
+              numberOfLines={1}
+            >
               {restaurant.address}
             </Text>
           </View>
