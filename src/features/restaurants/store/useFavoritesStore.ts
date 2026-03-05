@@ -1,13 +1,12 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { Restaurant } from '@app-types/api';
 
 interface FavoritesState {
-  favorites: Restaurant[];
+  favoriteIds: string[];
   isHydrated: boolean;
 
-  addFavorite: (restaurant: Restaurant) => void;
+  addFavorite: (restaurantId: string) => void;
   removeFavorite: (restaurantId: string) => void;
   isFavorite: (restaurantId: string) => boolean;
   setHydrated: () => void;
@@ -16,23 +15,25 @@ interface FavoritesState {
 export const useFavoritesStore = create<FavoritesState>()(
   persist(
     (set, get) => ({
-      favorites: [],
+      favoriteIds: [],
       isHydrated: false,
 
-      addFavorite: (restaurant: Restaurant) => {
+      addFavorite: (restaurantId: string) => {
         set((state) => ({
-          favorites: [...state.favorites, restaurant],
+          favoriteIds: state.favoriteIds.includes(restaurantId)
+            ? state.favoriteIds
+            : [...state.favoriteIds, restaurantId],
         }));
       },
 
       removeFavorite: (restaurantId: string) => {
         set((state) => ({
-          favorites: state.favorites.filter((r) => r._id !== restaurantId),
+          favoriteIds: state.favoriteIds.filter((id) => id !== restaurantId),
         }));
       },
 
       isFavorite: (restaurantId: string) => {
-        return get().favorites.some((r) => r._id === restaurantId);
+        return get().favoriteIds.includes(restaurantId);
       },
 
       setHydrated: () => {
@@ -42,7 +43,7 @@ export const useFavoritesStore = create<FavoritesState>()(
     {
       name: 'favorites-storage',
       storage: createJSONStorage(() => AsyncStorage),
-      partialize: (state) => ({ favorites: state.favorites }),
+      partialize: (state) => ({ favoriteIds: state.favoriteIds }),
       onRehydrateStorage: () => (state) => {
         state?.setHydrated();
       },

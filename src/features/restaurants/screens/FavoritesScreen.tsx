@@ -6,13 +6,25 @@ import type { AppTabParamList } from '@app-types/navigation';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { useFavoritesStore } from '../store';
 import { RestaurantCard } from '../components/RestaurantCard';
+import { useRestaurantDetail } from '../hooks/useRestaurantDetail';
 import { IconHeart } from '@components/icons';
 
 type FavoritesNavigationProp = BottomTabNavigationProp<AppTabParamList, 'Favorites'>;
 
+interface FavoriteItemProps {
+  restaurantId: string;
+  onPress: (id: string) => void;
+}
+
+function FavoriteItem({ restaurantId, onPress }: FavoriteItemProps): React.JSX.Element | null {
+  const { data: restaurant } = useRestaurantDetail(restaurantId);
+  if (!restaurant) return null;
+  return <RestaurantCard restaurant={restaurant} onPress={onPress} variant="list" />;
+}
+
 export default function FavoritesScreen(): React.JSX.Element {
   const navigation = useNavigation<FavoritesNavigationProp>();
-  const favorites = useFavoritesStore((s) => s.favorites);
+  const favoriteIds = useFavoritesStore((s) => s.favoriteIds);
 
   const handleRestaurantPress = (restaurantId: string): void => {
     navigation.navigate('RestaurantList', { screen: 'RestaurantDetail', params: { restaurantId } });
@@ -24,7 +36,7 @@ export default function FavoritesScreen(): React.JSX.Element {
         <Text className="font-roobert-semibold text-2xl text-ink">Favoritos</Text>
       </View>
 
-      {favorites.length === 0 ? (
+      {favoriteIds.length === 0 ? (
         <View className="flex-1 items-center justify-center gap-3">
           <IconHeart color="#E5E7EB" size={56} />
           <Text className="font-roobert-semibold text-base text-ink">Sin favoritos aún</Text>
@@ -34,11 +46,11 @@ export default function FavoritesScreen(): React.JSX.Element {
         </View>
       ) : (
         <FlatList
-          data={favorites}
-          keyExtractor={(item) => item._id}
+          data={favoriteIds}
+          keyExtractor={(id) => id}
           contentContainerClassName="px-4 pt-2 pb-6 gap-4"
           renderItem={({ item }) => (
-            <RestaurantCard restaurant={item} onPress={handleRestaurantPress} variant="list" />
+            <FavoriteItem restaurantId={item} onPress={handleRestaurantPress} />
           )}
           showsVerticalScrollIndicator={false}
         />

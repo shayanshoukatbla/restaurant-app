@@ -34,7 +34,7 @@ export function RestaurantCard({
     if (favorited) {
       removeFavorite(restaurant._id);
     } else {
-      addFavorite(restaurant);
+      addFavorite(restaurant._id);
     }
   };
 

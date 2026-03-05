@@ -19,7 +19,7 @@ export function RestaurantHero({ restaurant, onBack }: RestaurantHeroProps): Rea
     if (favorited) {
       removeFavorite(restaurant._id);
     } else {
-      addFavorite(restaurant);
+      addFavorite(restaurant._id);
     }
   };
 

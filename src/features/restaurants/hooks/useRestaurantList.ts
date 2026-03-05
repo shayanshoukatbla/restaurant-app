@@ -2,6 +2,8 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { restaurantApi } from '../api/restaurantApi';
 import type { Restaurant } from '@app-types/api';
 
+export const RESTAURANT_LIST_KEY = ['restaurants'] as const;
+
 const PAGE_SIZE = 10;
 
 export interface UseRestaurantListResult {
@@ -16,7 +18,7 @@ export interface UseRestaurantListResult {
 
 export function useRestaurantList(): UseRestaurantListResult {
   const query = useInfiniteQuery({
-    queryKey: ['restaurants'],
+    queryKey: RESTAURANT_LIST_KEY,
     initialPageParam: 1,
     queryFn: ({ pageParam }) =>
       restaurantApi.getList({ page: pageParam as number, limit: PAGE_SIZE }),

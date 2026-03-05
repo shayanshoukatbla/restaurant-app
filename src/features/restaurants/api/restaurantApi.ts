@@ -9,6 +9,7 @@ import type {
   PresignRequest,
   PresignResponse,
   CreateRestaurantRequest,
+  UpdateRestaurantRequest,
 } from '@app-types/api';
 
 export const uploadApi = {
@@ -51,6 +52,15 @@ export const restaurantApi = {
   getDetail: async (id: string): Promise<Restaurant> => {
     const res = await apiClient.get<Restaurant>(`/restaurant/detail/${id}`);
     return res.data;
+  },
+
+  update: async (id: string, body: UpdateRestaurantRequest): Promise<Restaurant> => {
+    const res = await apiClient.put<Restaurant>(`/restaurant/${id}`, body);
+    return res.data;
+  },
+
+  delete: async (id: string): Promise<void> => {
+    await apiClient.delete(`/restaurant/${id}`);
   },
 
   addComment: async ({

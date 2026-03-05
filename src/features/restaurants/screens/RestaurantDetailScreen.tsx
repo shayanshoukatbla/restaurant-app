@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { ScrollView, KeyboardAvoidingView, Platform, View, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { RestaurantStackScreenProps } from '@app-types/navigation';
 import type { ApiError } from '@app-types/api';
@@ -10,13 +10,14 @@ import {
   useUpdateComment,
   useDeleteComment,
 } from '../hooks/useRestaurantDetail';
+import { useDeleteRestaurant } from '../hooks/useCreateRestaurant';
 import {
   RestaurantHero,
   RestaurantBody,
   RestaurantReviews,
   RestaurantDetailSkeleton,
 } from '../components/detail';
-import { ErrorScreen } from '@components/index';
+import { FallbackScreen, Button } from '@components/index';
 
 type Props = RestaurantStackScreenProps<'RestaurantDetail'>;
 
@@ -30,12 +31,11 @@ export default function RestaurantDetailScreen({ route, navigation }: Props): Re
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const { data: restaurant, isLoading, isError, error } = useRestaurantDetail(restaurantId);
+  const { mutate: deleteRestaurant, isPending: isDeletingRestaurant } = useDeleteRestaurant();
 
-  // ── Mutations ────────────────────────────────────────────────
+  // ── Comment mutations ────────────────────────────────────────
   const { mutate: addComment, isPending: isAddingComment } = useAddComment(restaurantId);
-
   const { mutate: updateComment } = useUpdateComment(restaurantId);
-
   const { mutate: deleteComment } = useDeleteComment(restaurantId);
 
   // ── Handlers ─────────────────────────────────────────────────
@@ -56,6 +56,24 @@ export default function RestaurantDetailScreen({ route, navigation }: Props): Re
     deleteComment(commentId, { onSettled: () => setDeletingId(null) });
   };
 
+  const handleDeleteRestaurant = (): void => {
+    Alert.alert(
+      'Eliminar restaurante',
+      '¿Estás seguro de que deseas eliminar este restaurante? Esta acción no se puede deshacer.',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Eliminar',
+          style: 'destructive',
+          onPress: () =>
+            deleteRestaurant(restaurantId, {
+              onSuccess: () => navigation.goBack(),
+            }),
+        },
+      ],
+    );
+  };
+
   // ── Render states ─────────────────────────────────────────────
   if (isLoading) {
     return (
@@ -69,8 +87,18 @@ export default function RestaurantDetailScreen({ route, navigation }: Props): Re
 
   if (isError || !restaurant) {
     const message = (error as unknown as ApiError)?.error ?? 'Ups, algo salió mal';
-    return <ErrorScreen title={message} buttonLabel="Volver" onPress={() => navigation.goBack()} />;
+    return <FallbackScreen title={message} buttonLabel="Volver" onPress={() => navigation.goBack()} />;
   }
+
+  const ownerName =
+    typeof restaurant.owner === 'string'
+      ? restaurant.owner
+      : ((restaurant.owner as unknown as { name?: string })?.name ?? '');
+
+  const isOwner =
+    currentUserName != null &&
+    !!ownerName &&
+    currentUserName.trim().toLowerCase() === ownerName.trim().toLowerCase();
 
   // ── Main content ─────────────────────────────────────────────
   return (
@@ -102,6 +130,29 @@ export default function RestaurantDetailScreen({ route, navigation }: Props): Re
             deletingCommentId={deletingId}
             editingCommentId={editingId}
           />
+
+          {/* Owner-only: Edit + Delete restaurant */}
+          {isOwner && (
+            <View className="flex-row gap-3">
+              <View className="flex-1">
+                <Button
+                  label="Editar"
+                  variant="outline-black"
+                  fullWidth
+                  onPress={() => navigation.navigate('EditRestaurant', { restaurantId })}
+                />
+              </View>
+              <View className="flex-1">
+                <Button
+                  label="Eliminar"
+                  variant="solid-black"
+                  fullWidth
+                  loading={isDeletingRestaurant}
+                  onPress={handleDeleteRestaurant}
+                />
+              </View>
+            </View>
+          )}
         </ScrollView>
       </SafeAreaView>
     </KeyboardAvoidingView>

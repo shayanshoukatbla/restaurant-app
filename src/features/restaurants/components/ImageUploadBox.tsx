@@ -15,6 +15,7 @@ export interface SelectedImage {
 interface ImageUploadBoxProps {
   onImageSelected: (image: SelectedImage) => void;
   onClear: () => void;
+  initialUri?: string;
   isUploading?: boolean;
   error?: string;
 }
@@ -22,10 +23,11 @@ interface ImageUploadBoxProps {
 export function ImageUploadBox({
   onImageSelected,
   onClear,
+  initialUri,
   isUploading = false,
   error,
 }: ImageUploadBoxProps): React.JSX.Element {
-  const [localUri, setLocalUri] = useState<string | undefined>();
+  const [localUri, setLocalUri] = useState<string | undefined>(initialUri);
 
   const handlePress = async (): Promise<void> => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
