@@ -1,7 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "mcp__Framelink_Figma_MCP__get_figma_data"
-    ]
-  }
-}

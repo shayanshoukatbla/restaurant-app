@@ -28,9 +28,7 @@
       "predictiveBackGestureEnabled": false,
       "package": "com.shayanshoukat001.shayanrestaurantapp"
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
+    "platforms": ["ios", "android"],
     "plugins": [
       "expo-font",
       "@react-native-community/datetimepicker"

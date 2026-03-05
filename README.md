@@ -1,188 +1,306 @@
-# Restaurants App - React Native Technical Challenge (Mobile)
+# Shayan Restaurant App
 
-## Context
-
-At Tailor we build mobile apps with React Native, focusing on product quality, maintainable architecture, and best practices. This challenge evaluates your ability to deliver a functional app end to end: UI, navigation, API integration, loading/error states, and delivery.
+A full-featured restaurant discovery mobile app built with React Native (Expo). Supports user authentication, restaurant browsing in list and map views, restaurant CRUD, favorites, and a comment/rating system.
 
 ---
 
-## Objective
+## Requirements Coverage
 
-Build a restaurants application in React Native that enables:
-- User authentication (signup/login) and session persistence.
-- Restaurant list and detail views powered by the API.
-- Restaurant CRUD.
-- In-app favorites management (local persistence).
-- Restaurant comments management.
-
----
-
-## Design (Figma)
-
-You must implement the design from Figma:
-  - https://www.figma.com/design/LuwjRZZb3ms0MeAmu7gZch/Tailor-Prueba-t%C3%A9cnica-Junior?node-id=1235-1831&t=QBe1sh3ejkqnEot3-1
-
-You may adjust micro-details if needed due to platform limitations, but prioritize visual consistency and good UX.
-
----
-
-## Backend API
-
-A dedicated API is provided for this challenge. Use the contract defined in the documentation (endpoints, models, params, and responses).
-
-- Base URL (API):
-  - https://react-native-challenge-api.tailor-hub.com/api
-- Documentation (Swagger):
-  - https://react-native-challenge-api.tailor-hub.com/api/docs
-  - https://react-native-challenge-api.tailor-hub.com/api/docs.json
-
-### Main endpoints
-
-Auth
-- `POST /auth/signup`
-- `POST /auth/login`
-- `POST /auth/logout`
-- `GET /auth/verify`
-
-Restaurants
-- `GET /restaurant/list` (paged: `limit`, `page`)
-- `GET /restaurant/detail/:id`
-- `POST /restaurant/create`
-- `PUT /restaurant/:id`
-- `DELETE /restaurant/:id`
-
-Comments
-- `POST /restaurant/:id/comment`
-- `PUT /restaurant/:id/comment/:commentId`
-- `DELETE /restaurant/:id/comment/:commentId`
-
-Uploads (S3 presigned)
-- `POST /upload/presign`
+| Feature                      | Status  | Notes                                                                 |
+| ---------------------------- | ------- | --------------------------------------------------------------------- |
+| Signup / Login / Logout      | Done    | 2-step signup, session persistence                                    |
+| Session verification on boot | Done    | `GET /auth/verify` on app start                                       |
+| Bearer token on all requests | Done    | Axios interceptor, 401 auto-logout                                    |
+| Restaurant list (paged)      | Done    | Infinite scroll, 10 per page                                          |
+| Restaurant detail            | Done    | Address, description, image, map, reviews                             |
+| Restaurant map view          | Done    | Custom markers, card carousel, long-press directions                  |
+| Create restaurant            | Done    | Image upload via presign (S3), Nominatim address search               |
+| Edit restaurant              | Done    | Pre-filled form, updates list + detail cache                          |
+| Delete restaurant            | Done    | Owner-only, confirmation dialog                                       |
+| Add comment + rating         | Done    | 1–5 stars, 10–255 chars, real-time validation                         |
+| Edit comment                 | Done    | Owner-only, inline edit mode                                          |
+| Delete comment               | Done    | Owner-only, confirmation dialog                                       |
+| Favorites (local)            | Done    | Zustand + AsyncStorage, persisted on device                           |
+| Loading states               | Done    | Skeleton loaders, spinners, button loading                            |
+| Error handling               | Done    | Formatted API errors, fallback screens                                |
+| Profile screen               | Partial | UI complete; update profile API not yet available in backend contract |
 
 ---
 
-## Functional requirements (aligned with the API)
+## Tech Stack
 
-1) User authentication (Auth)
-- Implement Register and Login using `/auth/signup` and `/auth/login`.
-- Persist the session token in `AsyncStorage` to avoid logging in on every app start.
-- Implement Logout (`/auth/logout`).
-- (Recommended) Verify session on app start with `/auth/verify`.
-- For protected endpoints, send the token as `Authorization: Bearer <token>`.
-
-2) Restaurant List
-- Display a list of restaurants from `/restaurant/list` (paged).
-- Each item must include at minimum `name`, `address`, `image`, and `avgRating` if available.
-
-3) Restaurant Details
-- When selecting a restaurant, navigate to a detail view (`/restaurant/detail/:id`) with extended info:
-  - Address, description, and image.
-  - Coordinates (`latlng`) for the map.
-  - Average rating and associated comments.
-
-4) Restaurant CRUD
-- Create a restaurant (`/restaurant/create`).
-- Edit an existing restaurant (`/restaurant/:id`).
-- Delete a restaurant (`/restaurant/:id`).
-
-Notes:
-- For create/update, the API requires `name`, `address`, `image`, and `latlng` (and `description` is optional).
-- If you support image uploads, use `/upload/presign` to get a `publicUrl` and store it in the `image` field (allowed types: `image/jpeg`, `image/png`, `image/webp`).
-
-5) Favorites (in-app)
-- Allow users to mark/unmark restaurants as favorites in the app.
-- Favorites must be stored locally (persisted on device). There is no favorites endpoint in the API.
-- Include a screen that lists only the user's favorites.
-
-6) Restaurant comments
-- Show comments associated with a restaurant (included in the detail response).
-- Allow adding a comment using `/restaurant/:id/comment` with `comment` and `rating` (rating 1-5, comment 10-255 chars).
-- (Optional) Edit/delete comments (`PUT/DELETE /restaurant/:id/comment/:commentId`) if you implement it.
-
-7) Loading states
-- Show a loading indicator while fetching data (list, detail, comments, etc.).
-
-8) Error handling
-- Show appropriate error messages for:
-  - Network issues.
-  - Invalid responses.
-  - Server/API errors.
-- Avoid blank screens: always provide user feedback.
-
-9) Design and UX
-- The app must follow the design, be responsive, and feel good on iOS and Android.
-- Basic accessibility is valued (labels, touch targets, reasonable contrast).
-
-10) Navigation
-- Use `react-navigation`.
-- Required structure:
-  - A Drawer with different sections.
-  - Two navigation stacks:
-    - Auth Stack: Login / Register.
-    - App Stack: the rest of the screens (includes map + list, detail, create).
+| Layer        | Technology                                                          |
+| ------------ | ------------------------------------------------------------------- |
+| Framework    | Expo SDK 54 / React Native 0.81.5                                   |
+| Language     | TypeScript (strict mode)                                            |
+| Styling      | NativeWind v4.2.2 + Tailwind CSS v3.4.19                            |
+| Navigation   | React Navigation v7 (native stack + bottom tabs)                    |
+| Server state | TanStack Query v5 (infinite queries, mutations, cache invalidation) |
+| Client state | Zustand v5 + AsyncStorage persistence                               |
+| Forms        | react-hook-form v7 + Zod v4                                         |
+| HTTP         | Axios with Bearer token interceptor                                 |
+| Maps         | react-native-maps v1.18                                             |
+| Geocoding    | Nominatim (OpenStreetMap)                                           |
+| Image upload | expo-image-picker + S3 presigned URL flow                           |
+| Fonts        | expo-font (Roobert Regular + SemiBold)                              |
+| Animations   | react-native-reanimated ~4.1.1                                      |
 
 ---
 
-## Technical requirements (recommendations)
+## Project Structure
 
-- React Native. (Expo is recommended, not required.)
-- TypeScript (recommended).
-- A maintainable networking layer (fetch/axios + interceptors if applicable).
-- Coherent state management (local + server-state).
-- Clear project structure (features/modules, components, navigation, services, etc.).
-- Do not commit secrets. If configuration is needed, include a `.env.example`.
-
----
-
-## Bonus tracks
-
-Testing
-- Realistic unit tests (components and/or logic).
-- End-to-end tests with Detox (if time/setup allows).
-
-Improvements
-- Include a brief section with improvements you would implement if the project continued:
-  - architecture, performance, scalability, UX, accessibility, observability, etc.
-
-Deployments / Distribution (optional)
-- If you generate builds (Android or iOS), document the process and add links in the README.
-- No platform is prioritized.
-- If you generate distributable builds, send them by email to tools@tailor-hub.com.
-
----
-
-## AI usage (highly valued)
-
-We are a team that embraces AI as part of the workflow. We value:
-- Using AI to accelerate development, tests, refactors, documentation, and debugging.
-- Clear justification of decisions: what AI generated, what you reviewed, what you adjusted, and how you ensured quality.
-
-Include an "AI Usage" section in the README with:
-- AI tools used.
-- Which parts were generated/assisted with AI.
-- How you validated the result (review, tests, manual verification, etc.).
-
----
-
-## Delivery
-
-1. Push your solution to a public GitHub repository.
-2. Include a `README.md` with complete instructions to run the app (Android and iOS if applicable).
-3. If there is any distribution/deployment, add links in the README.
+```
+src/
+├── api/
+│   ├── client.ts               # Axios instance, interceptors, configureApiClient()
+│   └── geocodingApi.ts         # Nominatim geocoding
+├── components/                 # Shared UI components
+│   ├── icons/index.tsx         # All SVG icons as typed React components
+│   ├── AppInput.tsx
+│   ├── AppCard.tsx
+│   ├── Button.tsx
+│   ├── TabBar.tsx
+│   ├── AddressInput.tsx
+│   ├── ProfileDateInput.tsx
+│   └── ...
+├── features/
+│   ├── auth/
+│   │   ├── api/authApi.ts
+│   │   ├── components/
+│   │   ├── schemas/
+│   │   ├── screens/            # Splash, Welcome, Signin, Signup, Profile
+│   │   ├── store/useAuthStore.ts
+│   │   └── utils/dateUtils.ts
+│   └── restaurants/
+│       ├── api/restaurantApi.ts
+│       ├── components/
+│       │   ├── detail/         # Hero, Body, Reviews, AddComment, CommentItem, StarRating
+│       │   ├── RestaurantMapView.tsx
+│       │   ├── MapMarkers.tsx
+│       │   ├── MapCardStrip.tsx
+│       │   └── ...
+│       ├── hooks/
+│       ├── schemas/
+│       ├── screens/            # Restaurants, RestaurantDetail, CreateRestaurant, EditRestaurant, Favorites
+│       ├── store/useFavoritesStore.ts
+│       └── utils/mapDirections.ts
+├── hooks/                      # useAddressSuggestions, useAppFonts
+├── navigation/                 # RootNavigator, AuthNavigator, AppNavigator, RestaurantsNavigator
+├── types/                      # api.ts, navigation.ts
+└── utils/errorFormatter.ts
+```
 
 ---
 
-## Very important (execution)
+## Navigation Architecture
 
-Evaluation depends on being able to run the project. If we cannot run the app by following the README instructions in your repository, the challenge will not be evaluated.
+```
+RootNavigator (native stack)
+├── AuthNavigator (native stack)          — unauthenticated
+│   └── Splash → Welcome → Signin → Signup
+└── AppNavigator (bottom tabs)            — authenticated
+    ├── RestaurantList → RestaurantsNavigator (native stack)
+    │   ├── Restaurants            (list / map toggle)
+    │   ├── RestaurantDetail
+    │   ├── CreateRestaurant
+    │   └── EditRestaurant
+    ├── Favorites
+    └── Profile
+```
 
 ---
 
-## What we will evaluate
+## Getting Started
 
-- Design fidelity and UX quality.
-- Correct API integration (contract, errors, states).
-- Code structure, readability, reuse, and maintainability.
-- Auth/App navigation separation.
-- Delivery quality: README, scripts, consistency, and (bonus) tests.
-- Responsible and justified AI usage.
+### Prerequisites
+
+- Node.js 18+
+- Expo CLI: `npm install -g expo-cli`
+- EAS CLI (for builds/updates): `npm install -g eas-cli`
+- iOS: Xcode 15+ with a simulator or physical device
+- Android: Android Studio with an emulator, or a physical device with Expo Go
+
+### 1. Clone and install
+
+```bash
+git clone <your-repo-url>
+cd shayan-restaurant-app
+npm install
+```
+
+### 2. Environment variables
+
+Copy `.env.example` to `.env` and fill in the values:
+
+```bash
+cp .env.example .env
+```
+
+```env
+EXPO_PUBLIC_API_BASE_URL=https://react-native-challenge-api.tailor-hub.com/api
+EXPO_PUBLIC_GEOCODING_API_BASE_URL=https://nominatim.openstreetmap.org
+```
+
+### 3. Run locally (Expo Go)
+
+```bash
+# Start the dev server
+npx expo start
+
+# Press 'i' for iOS simulator
+# Press 'a' for Android emulator
+# Scan QR code with Expo Go app on a physical device
+```
+
+> Note: `react-native-maps` is bundled with Expo Go and works out of the box with `npx expo start`.
+
+### 4. Development build (recommended for maps)
+
+```bash
+# iOS
+npx expo run:ios
+
+# Android
+npx expo run:android
+```
+
+---
+
+## EAS Builds & Updates
+
+This project is configured for [EAS Build](https://docs.expo.dev/build/introduction/) and [EAS Update](https://docs.expo.dev/eas-update/introduction/).
+
+### Build profiles (eas.json)
+
+| Profile       | Type                  | Notes                   |
+| ------------- | --------------------- | ----------------------- |
+| `development` | Internal distribution | Dev client enabled      |
+| `preview`     | Internal distribution | APK/IPA for testing     |
+| `production`  | Store submission      | Auto-increments version |
+
+### Create a preview build
+
+```bash
+# Android APK
+eas build --platform android --profile preview
+
+# iOS IPA (requires Apple Developer account)
+eas build --platform ios --profile preview
+```
+
+### Push an OTA update
+
+```bash
+eas update --branch preview --message "Your update message"
+```
+
+> The `platforms` field in `app.json` is set to `["ios", "android"]`, so web is excluded from all builds and OTA updates.
+
+---
+
+## API
+
+Base URL: `https://react-native-challenge-api.tailor-hub.com/api`
+
+All authenticated requests include `Authorization: Bearer <token>` via the Axios interceptor in `src/api/client.ts`. A 401 response automatically clears the session and redirects to the auth flow.
+
+### Endpoints used
+
+```
+POST   /auth/signup
+POST   /auth/login
+POST   /auth/logout
+GET    /auth/verify
+
+GET    /restaurant/list?page=&limit=
+GET    /restaurant/detail/:id
+POST   /restaurant/create
+PUT    /restaurant/:id
+DELETE /restaurant/:id
+
+POST   /restaurant/:id/comment
+PUT    /restaurant/:id/comment/:commentId
+DELETE /restaurant/:id/comment/:commentId
+
+POST   /upload/presign
+```
+
+---
+
+## Design
+
+Implemented from the provided Figma file. Key design decisions:
+
+- **Color palette**: `ink` (#0B0B0B), `canvas` (#FFFFFF), `card` (#F1F1F0), `blue` (#264BEB), `primary` (#E94560)
+- **Typography**: Roobert Regular + SemiBold (custom fonts loaded via expo-font)
+- **Styling**: 90% NativeWind / Tailwind CSS — 10% inline `style={}` objects )
+- **Border radius**: `rounded-3xl` (24px) for cards, `rounded-button` (17px) for buttons
+
+---
+
+## Known Limitations
+
+- **Profile update**: The profile screen UI (DNI, birth date, address) is complete, but there is no `/user/update` endpoint in the provided API contract. The form data is collected but not submitted.
+- **Comment owner check**: Ownership is determined by matching `user.name` with `review.owner.name`. If names are not unique, edit/delete buttons may appear for wrong users.
+
+---
+
+## Potential Improvements
+
+**Architecture**
+
+- Add a proper user update endpoint to the backend and connect the profile screen form.
+- Replace name-based comment ownership with ID comparison once the API exposes `review.owner._id`.
+- Extract comment mutation logic from the screen into a dedicated `useCommentMutations` hook.
+
+**Performance**
+
+- Memoize `RestaurantCard` with `React.memo` to reduce re-renders during infinite scroll.
+- Add image caching (e.g. `expo-image`) to avoid re-fetching restaurant images on scroll.
+- Implement optimistic updates for favorite toggles.
+
+**UX / Accessibility**
+
+- Add `accessibilityLabel` and `accessibilityRole` to all interactive elements.
+- Improve map empty state when no restaurants have coordinates.
+- Offline mode: show cached data with a "you're offline" banner.
+
+**Testing**
+
+- Unit tests for Zod schemas and utility functions (`errorFormatter`, `dateUtils`).
+- Component tests for `AddComment` and `CommentItem` using React Native Testing Library.
+- E2E tests with Detox for the auth flow and restaurant creation.
+
+**Observability**
+
+- Integrate Sentry for crash reporting and error tracking.
+- Add analytics events for key actions (restaurant view, comment add, map direction opened).
+
+---
+
+## AI Usage
+
+This project was built with Claude Code (Anthropic) as the primary AI assistant throughout the development process.
+
+**What AI assisted with:**
+
+- Generating boilerplate for feature modules (screens, hooks, API files) following the established architecture pattern.
+- Writing Zod validation schemas and react-hook-form integration.
+- Implementing the map view components (MapMarkers, MapCardStrip, marker sync logic).
+- Debugging NativeWind v4 compatibility issues with `react-native-css-interop`.
+- Writing the Axios interceptor pattern and TanStack Query infinite scroll setup.
+- Image upload presign flow implementation.
+- Platform-specific map directions utility (`mapDirections.ts`).
+
+**How results were validated:**
+
+- Every generated file was reviewed for correctness before being committed.
+- Styling was visually verified against the Figma design on both iOS and Android.
+- API integration was tested against the live backend at each step.
+- TypeScript compilation (`tsc --noEmit`) was used to catch type errors before running.
+- Manual testing on physical devices and simulators for navigation flows, form validation, and map interactions.
+- EAS builds were generated and tested as preview APKs on Android devices.
+
+**Tools used:**
+
+- Claude Code (claude-sonnet-4-6) — primary AI coding assistant via VS Code extension
