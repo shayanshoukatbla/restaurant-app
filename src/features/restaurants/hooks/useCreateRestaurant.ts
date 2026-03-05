@@ -10,6 +10,7 @@ import type {
 import type { Restaurant } from '@app-types/api';
 import { RESTAURANT_DETAIL_KEY } from './useRestaurantDetail';
 import { RESTAURANT_LIST_KEY } from './useRestaurantList';
+import { useFavoritesStore } from '../store/useFavoritesStore';
 
 interface UploadImageParams {
   fileUri: string;
@@ -41,8 +42,16 @@ export function useUpdateRestaurant(restaurantId: string) {
   const queryClient = useQueryClient();
   return useMutation<Restaurant, ApiError, UpdateRestaurantRequest>({
     mutationFn: (body) => restaurantApi.update(restaurantId, body),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: RESTAURANT_DETAIL_KEY(restaurantId) });
+    onSuccess: async () => {
+      // Refetch detail to get the complete updated restaurant
+      await queryClient.invalidateQueries({ queryKey: RESTAURANT_DETAIL_KEY(restaurantId) });
+
+      // Sync the full fresh data to favorites cache
+      const fresh = queryClient.getQueryData<Restaurant>(RESTAURANT_DETAIL_KEY(restaurantId));
+      if (fresh) {
+        useFavoritesStore.getState().updateCachedRestaurant(fresh);
+      }
+
       queryClient.invalidateQueries({ queryKey: RESTAURANT_LIST_KEY });
     },
   });
@@ -50,6 +59,7 @@ export function useUpdateRestaurant(restaurantId: string) {
 
 export function useDeleteRestaurant() {
   const queryClient = useQueryClient();
+  const removeFavorite = useFavoritesStore((s) => s.removeFavorite);
   return useMutation<void, ApiError, string>({
     mutationFn: (id) => restaurantApi.delete(id),
     onSuccess: (_, id) => {
@@ -66,6 +76,7 @@ export function useDeleteRestaurant() {
       });
 
       queryClient.removeQueries({ queryKey: RESTAURANT_DETAIL_KEY(id) });
+      removeFavorite(id);
     },
   });
 }

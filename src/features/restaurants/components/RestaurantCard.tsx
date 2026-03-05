@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { Image } from 'expo-image';
 import type { Restaurant } from '@app-types/api';
 import { IconStar, IconHeart, IconHeartFill } from '@components/icons';
 import { useFavoritesStore } from '../store';
@@ -21,20 +22,21 @@ function StarRating({ rating }: { rating: number }): React.JSX.Element {
   );
 }
 
-export function RestaurantCard({
+export const RestaurantCard = React.memo(function RestaurantCard({
   restaurant,
   onPress,
   variant = 'list',
 }: RestaurantCardProps): React.JSX.Element {
-  const { isFavorite, addFavorite, removeFavorite } = useFavoritesStore();
-  const favorited = isFavorite(restaurant._id);
+  const favorited = useFavoritesStore((s) => s.favoriteIds.includes(restaurant._id));
+  const addFavorite = useFavoritesStore((s) => s.addFavorite);
+  const removeFavorite = useFavoritesStore((s) => s.removeFavorite);
   const reviewCount = restaurant.reviews?.length ?? 0;
 
   const handleFavoritePress = (): void => {
     if (favorited) {
       removeFavorite(restaurant._id);
     } else {
-      addFavorite(restaurant._id);
+      addFavorite(restaurant);
     }
   };
 
@@ -49,8 +51,8 @@ export function RestaurantCard({
       >
         <Image
           source={{ uri: restaurant.image }}
-          className="w-[68px] self-stretch rounded-2xl"
-          resizeMode="cover"
+          style={{ width: 68, alignSelf: 'stretch', borderRadius: 16 }}
+          contentFit="cover"
         />
         <View className="flex-1 gap-2 py-1">
           <View className="flex-row items-start justify-between gap-2">
@@ -87,8 +89,8 @@ export function RestaurantCard({
     >
       <Image
         source={{ uri: restaurant.image }}
-        className="w-20 h-20 rounded-2xl"
-        resizeMode="cover"
+        style={{ width: 80, height: 80, borderRadius: 16 }}
+        contentFit="cover"
       />
       <View className="flex-1 justify-between self-stretch py-2">
         <View className="flex-row items-start justify-between gap-2">
@@ -118,4 +120,4 @@ export function RestaurantCard({
       </View>
     </TouchableOpacity>
   );
-}
+});

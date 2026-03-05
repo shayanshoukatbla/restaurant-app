@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { Image } from 'expo-image';
 import { IconArrowLeft, IconHeart, IconHeartFill } from '@components/icons';
 import type { Restaurant } from '@app-types/api';
 import { useFavoritesStore } from '@features/restaurants/store/useFavoritesStore';
@@ -10,8 +11,9 @@ interface RestaurantHeroProps {
 }
 
 export function RestaurantHero({ restaurant, onBack }: RestaurantHeroProps): React.JSX.Element {
-  const { isFavorite, addFavorite, removeFavorite } = useFavoritesStore();
-  const favorited = isFavorite(restaurant._id);
+  const favorited = useFavoritesStore((s) => s.favoriteIds.includes(restaurant._id));
+  const addFavorite = useFavoritesStore((s) => s.addFavorite);
+  const removeFavorite = useFavoritesStore((s) => s.removeFavorite);
 
   const HeartIcon = favorited ? IconHeartFill : IconHeart;
 
@@ -19,7 +21,7 @@ export function RestaurantHero({ restaurant, onBack }: RestaurantHeroProps): Rea
     if (favorited) {
       removeFavorite(restaurant._id);
     } else {
-      addFavorite(restaurant._id);
+      addFavorite(restaurant);
     }
   };
 
@@ -28,8 +30,8 @@ export function RestaurantHero({ restaurant, onBack }: RestaurantHeroProps): Rea
       {/* Background image */}
       <Image
         source={{ uri: restaurant.image }}
-        className="absolute inset-0 w-full h-full"
-        resizeMode="cover"
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
+        contentFit="cover"
       />
 
       {/* Dark overlay */}

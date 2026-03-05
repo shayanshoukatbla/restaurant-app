@@ -9,7 +9,7 @@ A full-featured restaurant discovery mobile app built with React Native (Expo). 
 | Feature                      | Status  | Notes                                                                 |
 | ---------------------------- | ------- | --------------------------------------------------------------------- |
 | Signup / Login / Logout      | Done    | 2-step signup, session persistence                                    |
-| Session verification on boot | Done    | `GET /auth/verify` on app start                                       |
+| Session verification on boot | Done    | `GET /auth/verify` on app start; splash-style loading screen shown during verification |
 | Bearer token on all requests | Done    | Axios interceptor, 401 auto-logout                                    |
 | Restaurant list (paged)      | Done    | Infinite scroll, 10 per page                                          |
 | Restaurant detail            | Done    | Address, description, image, map, reviews                             |
@@ -39,9 +39,10 @@ A full-featured restaurant discovery mobile app built with React Native (Expo). 
 | Client state | Zustand v5 + AsyncStorage persistence                               |
 | Forms        | react-hook-form v7 + Zod v4                                         |
 | HTTP         | Axios with Bearer token interceptor                                 |
-| Maps         | react-native-maps v1.18                                             |
+| Maps         | react-native-maps v1.20.1                                           |
 | Geocoding    | Nominatim (OpenStreetMap)                                           |
 | Image upload | expo-image-picker + S3 presigned URL flow                           |
+| Image cache  | expo-image (memory + disk caching)                                  |
 | Fonts        | expo-font (Roobert Regular + SemiBold)                              |
 | Animations   | react-native-reanimated ~4.1.1                                      |
 
@@ -235,6 +236,7 @@ Implemented from the provided Figma file. Key design decisions:
 - **Typography**: Roobert Regular + SemiBold (custom fonts loaded via expo-font)
 - **Styling**: 90% NativeWind / Tailwind CSS — 10% inline `style={}` objects )
 - **Border radius**: `rounded-3xl` (24px) for cards, `rounded-button` (17px) for buttons
+- **Session loading screen**: while `GET /auth/verify` runs on boot, a splash-style screen (logo + spinner inside the `card` rounded card) is shown instead of a blank screen or a premature redirect
 
 ---
 
@@ -251,13 +253,6 @@ Implemented from the provided Figma file. Key design decisions:
 
 - Add a proper user update endpoint to the backend and connect the profile screen form.
 - Replace name-based comment ownership with ID comparison once the API exposes `review.owner._id`.
-- Extract comment mutation logic from the screen into a dedicated `useCommentMutations` hook.
-
-**Performance**
-
-- Memoize `RestaurantCard` with `React.memo` to reduce re-renders during infinite scroll.
-- Add image caching (e.g. `expo-image`) to avoid re-fetching restaurant images on scroll.
-- Implement optimistic updates for favorite toggles.
 
 **UX / Accessibility**
 

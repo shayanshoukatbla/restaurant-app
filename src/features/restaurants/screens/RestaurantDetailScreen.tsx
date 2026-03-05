@@ -1,16 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ScrollView, KeyboardAvoidingView, Platform, View, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { RestaurantStackScreenProps } from '@app-types/navigation';
 import type { ApiError } from '@app-types/api';
 import { useAuthStore } from '@features/auth/store';
-import {
-  useRestaurantDetail,
-  useAddComment,
-  useUpdateComment,
-  useDeleteComment,
-} from '../hooks/useRestaurantDetail';
+import { useRestaurantDetail } from '../hooks/useRestaurantDetail';
 import { useDeleteRestaurant } from '../hooks/useCreateRestaurant';
+import { useCommentMutations } from '../hooks/useCommentMutations';
 import {
   RestaurantHero,
   RestaurantBody,
@@ -27,34 +23,18 @@ export default function RestaurantDetailScreen({ route, navigation }: Props): Re
 
   const currentUserName = user?.name ?? null;
 
-  const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [editingId, setEditingId] = useState<string | null>(null);
-
   const { data: restaurant, isLoading, isError, error } = useRestaurantDetail(restaurantId);
   const { mutate: deleteRestaurant, isPending: isDeletingRestaurant } = useDeleteRestaurant();
 
   // ── Comment mutations ────────────────────────────────────────
-  const { mutate: addComment, isPending: isAddingComment } = useAddComment(restaurantId);
-  const { mutate: updateComment } = useUpdateComment(restaurantId);
-  const { mutate: deleteComment } = useDeleteComment(restaurantId);
-
-  // ── Handlers ─────────────────────────────────────────────────
-  const handleAddComment = (comment: string, rating: number): void => {
-    addComment({ comment, rating });
-  };
-
-  const handleEditComment = (commentId: string, comment: string, rating: number): void => {
-    setEditingId(commentId);
-    updateComment(
-      { commentId, body: { comment, rating } },
-      { onSettled: () => setEditingId(null) },
-    );
-  };
-
-  const handleDeleteComment = (commentId: string): void => {
-    setDeletingId(commentId);
-    deleteComment(commentId, { onSettled: () => setDeletingId(null) });
-  };
+  const {
+    handleAddComment,
+    handleEditComment,
+    handleDeleteComment,
+    isAddingComment,
+    deletingCommentId,
+    editingCommentId,
+  } = useCommentMutations(restaurantId);
 
   const handleDeleteRestaurant = (): void => {
     Alert.alert(
@@ -127,8 +107,8 @@ export default function RestaurantDetailScreen({ route, navigation }: Props): Re
             onEditComment={handleEditComment}
             onDeleteComment={handleDeleteComment}
             isAddingComment={isAddingComment}
-            deletingCommentId={deletingId}
-            editingCommentId={editingId}
+            deletingCommentId={deletingCommentId}
+            editingCommentId={editingCommentId}
           />
 
           {/* Owner-only: Edit + Delete restaurant */}
