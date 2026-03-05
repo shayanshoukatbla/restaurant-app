@@ -66,15 +66,16 @@ export default function SignupScreen({ navigation }: Props): React.JSX.Element {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-canvas" edges={['top', 'bottom', 'left', 'right']}>
-      <KeyboardAvoidingView
-        className="flex-1"
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <SafeAreaView className="flex-1 bg-canvas" edges={['top', 'left', 'right']}>
         <ScrollView
           className="flex-1"
           contentContainerClassName="flex-grow justify-between px-4 pt-10 pb-4"
           keyboardShouldPersistTaps="handled"
+          automaticallyAdjustKeyboardInsets
         >
           {/* Logo */}
           <View className="items-center">
@@ -170,7 +171,7 @@ export default function SignupScreen({ navigation }: Props): React.JSX.Element {
             )}
           </View>
         </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+      </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 }

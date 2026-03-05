@@ -1,9 +1,10 @@
 import React, { useRef, useState, useCallback } from 'react';
-import { View, FlatList } from 'react-native';
-import MapView, { type Region } from 'react-native-maps';
+import { View, FlatList, Platform } from 'react-native';
+import MapView, { type Region, PROVIDER_GOOGLE } from 'react-native-maps';
 import type { Restaurant } from '@app-types/api';
 import { MapMarkers } from './MapMarkers';
 import { MapCardStrip } from './MapCardStrip';
+import { darkMapStyle } from '../constants/darkMapStyle';
 
 interface RestaurantMapViewProps {
   restaurants: Restaurant[];
@@ -63,20 +64,26 @@ export function RestaurantMapView({
 
   return (
     <View className="flex-1">
-      <MapView
-        ref={mapRef}
+      <View
         style={{ flex: 1, borderTopLeftRadius: 24, borderTopRightRadius: 24, overflow: 'hidden' }}
-        initialRegion={initialRegion}
-        userInterfaceStyle="dark"
-        showsUserLocation
-        showsMyLocationButton={false}
       >
-        <MapMarkers
-          restaurants={mappable}
-          focusedIndex={focusedIndex}
-          onMarkerPress={focusOnIndex}
-        />
-      </MapView>
+        <MapView
+          ref={mapRef}
+          style={{ flex: 1 }}
+          initialRegion={initialRegion}
+          provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
+          customMapStyle={Platform.OS === 'android' ? darkMapStyle : undefined}
+          userInterfaceStyle="dark"
+          showsUserLocation
+          showsMyLocationButton={false}
+        >
+          <MapMarkers
+            restaurants={mappable}
+            focusedIndex={focusedIndex}
+            onMarkerPress={focusOnIndex}
+          />
+        </MapView>
+      </View>
 
       {mappable.length > 0 && (
         <MapCardStrip
