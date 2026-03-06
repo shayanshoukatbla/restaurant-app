@@ -47,7 +47,7 @@ export const RestaurantCard = React.memo(function RestaurantCard({
       <TouchableOpacity
         activeOpacity={0.85}
         onPress={() => onPress(restaurant._id)}
-        className="flex-row items-center gap-2 bg-canvas rounded-[20px] p-2"
+        className="flex-row items-center gap-2 bg-canvas rounded-[20px] p-2 max-h-[85px]"
       >
         <Image
           source={{ uri: restaurant.image }}

@@ -50,7 +50,13 @@ export default function SignupScreen({ navigation }: Props): React.JSX.Element {
     onSuccess: (data) => setAuth(data.token, data.user),
   });
 
-  const serverError = apiError ? (apiError as unknown as ApiError).error : null;
+  const serverError = (() => {
+    if (!apiError) return null;
+    const err = apiError as unknown as ApiError;
+    if (err.statusCode === 409) return 'Ya existe una cuenta con ese email.';
+    if (err.statusCode === 400) return 'Ya existe una cuenta con ese email.';
+    return 'Ocurrió un error inesperado. Inténtalo de nuevo.';
+  })();
 
   const onStepOneNext = (values: SignupStepOneFields): void => {
     setStepOneValues(values);
@@ -75,14 +81,14 @@ export default function SignupScreen({ navigation }: Props): React.JSX.Element {
           className="flex-1"
           contentContainerClassName="flex-grow justify-between px-4 pt-10 pb-4"
           keyboardShouldPersistTaps="handled"
-          automaticallyAdjustKeyboardInsets
+          automaticallyAdjustKeyboardInsets={Platform.OS === 'android' ? true : false}
         >
           {/* Logo */}
           <View className="items-center">
             <Logo size="md" color="blue" />
           </View>
 
-          <View className="w-full rounded-3xl bg-blue mt-6 p-4 pt-6 gap-10 h-[416px]">
+          <View className="w-full rounded-3xl bg-blue mt-6 p-4 py-6 gap-10 h-[416px] flex flex-col justify-between ">
             {/* Back button */}
             <View className="flex-row">
               <Button

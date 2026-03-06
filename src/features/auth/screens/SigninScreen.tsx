@@ -41,7 +41,12 @@ export default function SigninScreen({ navigation }: Props): React.JSX.Element {
     onSuccess: (data) => setAuth(data.token, data.user),
   });
 
-  const serverError = apiError ? (apiError as unknown as ApiError).error : null;
+  const serverError = (() => {
+    if (!apiError) return null;
+    const err = apiError as unknown as ApiError;
+    if (err.statusCode === 401 || err.statusCode === 400) return 'Email o contraseña incorrectos.';
+    return 'Ocurrió un error inesperado. Inténtalo de nuevo.';
+  })();
 
   const onSubmit = (values: SigninFields): void => {
     signin({
@@ -60,14 +65,14 @@ export default function SigninScreen({ navigation }: Props): React.JSX.Element {
           className="flex-1"
           contentContainerClassName="flex-grow justify-between px-4 pt-10 pb-4"
           keyboardShouldPersistTaps="handled"
-          automaticallyAdjustKeyboardInsets
+          automaticallyAdjustKeyboardInsets={Platform.OS === 'android' ? true : false}
         >
           {/* Logo */}
           <View className="items-center">
             <Logo size="md" color="blue" />
           </View>
 
-          <View className="w-full rounded-3xl bg-blue p-4 pt-6 gap-6 h-fit">
+          <View className="w-full rounded-3xl bg-blue p-4 py-6 gap-6 h-fit">
             {/* Inputs + Button */}
             <View className="w-full gap-6">
               <Controller

@@ -67,7 +67,7 @@ export function Button({
 
   const containerClass = [
     'flex-row items-center justify-center gap-2 rounded-button',
-    iconOnly ? 'py-2 px-8 !rounded-3xl' : fullWidth ? 'w-full h-11' : ' px-6  py-4',
+    iconOnly ? 'py-2 px-8 !rounded-3xl' : fullWidth ? 'w-full h-11' : ' px-6  py-3',
     container,
     disabled ? 'opacity-40' : '',
     className,
